@@ -24,7 +24,7 @@ while True:
     k = cv2.waitKey(100) & 0xff
     if k == 27:
         break
-    elif count >= 30:
+    elif count >= 60:
         break
 print("\n Da lay du lieu thanh cong")
 cam.release()
