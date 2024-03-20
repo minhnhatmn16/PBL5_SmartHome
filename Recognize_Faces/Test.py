@@ -72,8 +72,8 @@ names = ['Minh Nhat','Duy Tin','Anh Quan','Ngoc Anh']
 # cam.set(3, 640)
 # cam.set(4, 480)
 #
-minW = 0.1 * 640
-minH = 0.1 * 480
+minW = 0.1 * 1024
+minH = 0.1 * 768
 
 while True:
     # ret, img = cam.read()
@@ -104,6 +104,7 @@ while True:
         cv2.putText(img, str(id), (x + 10, y), font, 1, (0, 0, 255), 2)
         # cv2.putText(img, str(confidence), (x + 5, y + h - 5), font, 1, (255, 255, 0), 1)
 
+    # img = cv2.resize(img, (640,480))
     cv2.imshow('Nhan dien khuon mat', img)
 
     k = cv2.waitKey(10) & 0xff
