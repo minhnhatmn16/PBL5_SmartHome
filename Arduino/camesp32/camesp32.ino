@@ -3,12 +3,15 @@
 #include <WiFi.h>
 #include <esp32cam.h>
 
+// const char* WIFI_SSID = "banh";
+// const char* WIFI_PASS = "12345678";
+
+// const char* WIFI_SSID = "hello";
+// const char* WIFI_PASS = "012345678";
+
 const char* WIFI_SSID = "mangmiennui";
 const char* WIFI_PASS = "bkdn2003";
 
-// const char* WIFI_SSID = "TP-Link_064A";
-// const char* WIFI_PASS = "16755109";
- 
 WebServer server(80);
  
 static auto loRes = esp32cam::Resolution::find(320, 240);
@@ -22,8 +25,7 @@ void serveJpg()
     server.send(503, "", "");
     return;
   }
-  // Serial.printf("CAPTURE OK %dx%d %dbn", frame->getWidth(), frame->getHeight(), 
-  //               static_cast<int>(frame->size()));
+  Serial.printf("CAPTURE OK %dx%d %dbn", frame->getWidth(), frame->getHeight(),  static_cast<int>(frame->size()));
  
   server.setContentLength(frame->size());
   server.send(200, "image/jpeg");

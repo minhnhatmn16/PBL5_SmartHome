@@ -50,6 +50,7 @@
                     android:orientation="vertical"
                     android:gravity="center">
                     <TextView
+                        android:id="@+id/tempC"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="22"/>
@@ -66,6 +67,7 @@
                     android:orientation="vertical"
                     android:gravity="center">
                     <TextView
+                        android:id="@+id/hum"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="66%"/>
@@ -202,19 +204,16 @@
                     <ImageButton
                         android:layout_width="120dp"
                         android:layout_height="120dp"
-                        android:background="@drawable/fan"/>
+                        android:background="@drawable/faceid"/>
 
-                    <SeekBar
-                        android:layout_width="match_parent"
-                        android:layout_height="15dp"
-                        android:layout_marginTop="30dp"/>
                     <TextView
+                        android:id="@+id/faceid"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Fan"
+                        android:text="FaceID"
                         android:textStyle="bold"
                         android:textSize="20dp"
-                        android:layout_marginTop="10dp"/>
+                        android:layout_marginTop="50dp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
