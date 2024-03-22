@@ -97,10 +97,10 @@ void loop() {
     open_door = 0;
   }
 
-  // Serial.print(door); Serial.print(" "); 
-  // Serial.print(open_door); Serial.print(" "); 
-  // Serial.print(rheostat_val); Serial.print(" ");
-  // Serial.println(servo_val);
+  Serial.print(door); Serial.print(" "); 
+  Serial.print(open_door); Serial.print(" "); 
+  Serial.print(rheostat_val); Serial.print(" ");
+  Serial.println(servo_val);
 
 
 
