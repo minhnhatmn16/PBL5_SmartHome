@@ -1,5 +1,6 @@
 package com.example.smarthome;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -30,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference db_fan;
     Integer val_fan;
     SeekBar fan;
+
+    ImageButton faceid;
 
     DatabaseReference db_hum;
     Float val_hum;
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
 
         db_fan = database.getReference("fan");
         fan = findViewById(R.id.fan);
+
+        faceid = findViewById(R.id.faceid);
 
         db_hum = database.getReference("hum");
         hum = findViewById(R.id.hum);
@@ -162,6 +167,15 @@ public class MainActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
+
+        faceid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, FaceID.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
 
