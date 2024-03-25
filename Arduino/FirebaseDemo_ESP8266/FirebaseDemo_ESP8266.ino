@@ -28,6 +28,12 @@ int rheostat_val;
 int servo_pin = 0; // D3
 int servo_val;
 
+int ena_pin = 0; // D5
+int in1_pin = 12; // D6
+int in2_pin = 13; // D7
+int dc_val;
+
+
 int door;
 int open_door = 0;
 DHT HT(dht_pin,DHTType);
@@ -37,6 +43,8 @@ void setup() {
   pinMode(led_pin,OUTPUT);
   HT.begin();
   servo.attach(servo_pin);
+  pinMode(in1_pin,OUTPUT);
+  pinMode(in2_pin,OUTPUT);
 
   Serial.begin(9600);
 
@@ -97,11 +105,12 @@ void loop() {
     open_door = 0;
   }
 
-  Serial.print(door); Serial.print(" "); 
-  Serial.print(open_door); Serial.print(" "); 
-  Serial.print(rheostat_val); Serial.print(" ");
-  Serial.println(servo_val);
-
+  dc_val = Firebase.getInt("fan");
+  Serial.println(dc_val);
+  dc_val = 200;
+  digitalWrite(in1_pin,LOW);
+  digitalWrite(in2_pin,HIGH);
+  analogWrite(ena_pin,HIGH);
 
 
 

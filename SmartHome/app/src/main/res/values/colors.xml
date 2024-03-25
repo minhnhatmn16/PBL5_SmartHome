@@ -5,4 +5,6 @@
 
     <color name="my_fi_color">#8E24AA</color>
     <color name="color_bg">#63AEF1</color>
+    <color name="my_color">#63AEF1</color>
+
 </resources>

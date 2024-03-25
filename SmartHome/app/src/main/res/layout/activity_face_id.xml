@@ -53,35 +53,15 @@
                 app:layout_constraintTop_toTopOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_list"
-            android:layout_marginTop="40dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:padding="10dp"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nameeeeee"
-                android:textSize="30dp"
-                android:layout_marginLeft="10dp"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <ImageButton
-                    android:id="@+id/delete"
-                    android:layout_width="35dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/delete"
-                    android:layout_gravity="right"
-                    android:layout_marginRight="10dp"/>
-            </LinearLayout>
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp">
 
-        </LinearLayout>
+        </androidx.recyclerview.widget.RecyclerView>
 
 
     </LinearLayout>

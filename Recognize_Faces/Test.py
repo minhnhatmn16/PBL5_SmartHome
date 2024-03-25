@@ -51,18 +51,25 @@
 #
 # cv2.destroyAllWindows()
 
-url = 'http://192.168.0.7/cam-lo.jpg'
+# url = 'http://192.168.0.7/cam-lo.jpg'
 # url = 'http://192.168.111.172/cam-lo.jpg'
+url = 'http://192.168.0.8/cam-lo.jpg'
+
 import urllib.request
 import cv2
 import numpy as np
 import os
+import firebase_admin
+from firebase_admin import db, credentials
 
 recognizer = cv2.face.LBPHFaceRecognizer.create()
 recognizer.read('trainer/trainer.yml')
 cascadePath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascadePath)
 
+cred = credentials.Certificate('serviceAccountKey.json')
+firebase_admin.initialize_app(cred, {"databaseURL" : "https://smarthome-6ad5a-default-rtdb.firebaseio.com/"})
+ref = db.reference("/")
 font = cv2.FONT_HERSHEY_SIMPLEX
 
 id = 0
@@ -96,7 +103,9 @@ while True:
         id, confidence = recognizer.predict(gray[y:y + h, x:x + w])
 
         if (confidence < 100):
+
             id = names[id]
+            ref.update({"door" : 1})
         else:
             id = "Unknown"
 

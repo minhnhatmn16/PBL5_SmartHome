@@ -25,7 +25,7 @@ void serveJpg()
     server.send(503, "", "");
     return;
   }
-  Serial.printf("CAPTURE OK %dx%d %dbn", frame->getWidth(), frame->getHeight(),  static_cast<int>(frame->size()));
+  // Serial.printf("CAPTURE OK %dx%d %dbn", frame->getWidth(), frame->getHeight(),  static_cast<int>(frame->size()));
  
   server.setContentLength(frame->size());
   server.send(200, "image/jpeg");

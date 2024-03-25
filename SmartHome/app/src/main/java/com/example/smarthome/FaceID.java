@@ -10,6 +10,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FaceID extends AppCompatActivity {
 
@@ -33,5 +38,14 @@ public class FaceID extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        List<Item> items = new ArrayList<Item>();
+
+        items.add(new Item("Minh Nhật",R.drawable.a));
+        items.add(new Item("Minh Nhật",R.drawable.a));
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new MyApdapter(getApplicationContext(),items));
     }
 }
