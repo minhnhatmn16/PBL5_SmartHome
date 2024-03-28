@@ -177,9 +177,10 @@
                     android:orientation="vertical"
                     android:gravity="center">
                     <ImageButton
+                        android:id="@+id/gas"
                         android:layout_width="120dp"
                         android:layout_height="120dp"
-                        android:background="@drawable/off"/>
+                        android:background="@drawable/gas_nofire"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -208,7 +209,6 @@
                         android:background="@drawable/faceid"/>
 
                     <TextView
-                        android:id="@+id/faceid"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="FaceID"

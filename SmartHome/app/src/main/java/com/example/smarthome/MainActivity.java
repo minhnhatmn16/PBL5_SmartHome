@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity {
 
     FirebaseDatabase database;
+
     DatabaseReference db_light;
     Integer val_light;
     ImageButton light;
@@ -44,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference db_tempF;
     Float val_tempF;
     TextView tempF;
+
+    DatabaseReference db_gas;
+    Integer val_gas;
+    ImageButton gas;
     boolean isStart = false;
 
     @Override
@@ -77,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
 //        db_tempF = database.getReference("tempF");
 //        tempF = findViewById(R.id.tempF);
 
+        db_gas = database.getReference("gas");
+        gas = findViewById(R.id.gas);
+
+
+        // Firebase Value Change
         db_light.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -136,6 +146,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        db_gas.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                val_gas = snapshot.getValue(Integer.class);
+                if (val_gas > 500){
+                    gas.setBackgroundResource(R.drawable.gas_fire);
+                } else {
+                    gas.setBackgroundResource(R.drawable.gas_nofire);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        // Click Image Button
         light.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,7 +179,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        faceid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, FaceID.class);
+                startActivity(intent);
+            }
+        });
 
+
+        // Value SeekBar Change
         fan.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -168,13 +205,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        faceid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, FaceID.class);
-                startActivity(intent);
-            }
-        });
+
 
     }
 

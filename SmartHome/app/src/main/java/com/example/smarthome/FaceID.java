@@ -45,7 +45,17 @@ public class FaceID extends AppCompatActivity {
         items.add(new Item("Minh Nhật",R.drawable.a));
         items.add(new Item("Minh Nhật",R.drawable.a));
 
+
+        MyApdapter adapter = new MyApdapter(getApplicationContext(), items);
+        adapter.setOnItemClickListener(new MyApdapter.OnItemClickListener() {
+            @Override
+            public void onDeleteClick(int position) {
+                items.remove(position);
+                adapter.notifyItemRemoved(position);
+            }
+        });
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new MyApdapter(getApplicationContext(),items));
+        recyclerView.setAdapter(adapter);
     }
 }
