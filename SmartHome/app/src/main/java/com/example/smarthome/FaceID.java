@@ -19,6 +19,7 @@ import java.util.List;
 public class FaceID extends AppCompatActivity {
 
     ImageButton back_main;
+    ImageButton add_face;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,10 +32,19 @@ public class FaceID extends AppCompatActivity {
         });
 
         back_main = findViewById(R.id.back_main);
+        add_face = findViewById(R.id.add_face);
+
         back_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent  = new Intent(FaceID.this , MainActivity.class);
+                startActivity(intent);
+            }
+        });
+        add_face.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FaceID.this, add_face.class);
                 startActivity(intent);
             }
         });
