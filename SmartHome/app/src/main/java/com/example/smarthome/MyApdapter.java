@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import com.squareup.picasso.Picasso;
 
 public class MyApdapter extends RecyclerView.Adapter<Myviewholder> {
 
@@ -33,7 +34,7 @@ public class MyApdapter extends RecyclerView.Adapter<Myviewholder> {
 
     @Override
     public void onBindViewHolder(@NonNull Myviewholder holder, int position) {
-        holder.imageView.setImageResource(items.get(position).getImage());
+        Picasso.get().load(items.get(position).getImageUrl()).into(holder.imageView);
         holder.nameView.setText(items.get(position).getName());
 
         holder.but_Delete.setOnClickListener(new View.OnClickListener() {

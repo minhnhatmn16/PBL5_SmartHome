@@ -2,7 +2,16 @@ package com.example.smarthome;
 
 public class Item {
     String name;
-    int image;
+    String imageUrl;
+
+    String id;
+
+
+    public Item(String name, String imageUrl, String id) {
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -12,16 +21,19 @@ public class Item {
         this.name = name;
     }
 
-    public int getImage() {
-        return image;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImage(int image) {
-        this.image = image;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public Item(String name, int image) {
-        this.name = name;
-        this.image = image;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
