@@ -37,10 +37,15 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 public class add_face extends AppCompatActivity {
 
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference change_video = database.getReference("change_video");
     StorageReference storageReference;
     LinearProgressIndicator progressIndicator;
     Uri video;
@@ -89,7 +94,6 @@ public class add_face extends AppCompatActivity {
         storageReference = FirebaseStorage.getInstance().getReference();
 
 
-
         imageView = findViewById(R.id.imageView);
         progressIndicator = findViewById(R.id.process);
         selectVideo = findViewById(R.id.selectVideo);
@@ -114,12 +118,27 @@ public class add_face extends AppCompatActivity {
             }
         });
     }
+
+    String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    Random rand = new Random();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyMMddHHmmssSSS");
+    public String get_rand(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(sdf.format(new Date()));
+        for (int i=0; i<8; i++)
+            sb.append(CHARACTERS.charAt(rand.nextInt(CHARACTERS.length())));
+        return sb.toString();
+    }
+
     private void uploadVideo(Uri uri){
-        StorageReference reference = storageReference.child("video/" + String.valueOf(name.getText().toString() + "_" + UUID.randomUUID().toString()));
+        String name_video = name.getText().toString() + "_" + get_rand();
+        StorageReference reference = storageReference.child("video/" + name_video);
         reference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Toast.makeText(add_face.this,"Video uploaded sussessfully", Toast.LENGTH_SHORT).show();
+
+                change_video.setValue("ADD_" + name_video);
 
                 //Refresh
                 Intent intent = getIntent();

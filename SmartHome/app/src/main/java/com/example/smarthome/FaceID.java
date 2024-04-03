@@ -36,14 +36,14 @@ public class FaceID extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference change_image = database.getReference("change_image");
     DatabaseReference delete_image = database.getReference("delete_image");
+    DatabaseReference change_video = database.getReference("change_video");
 
     public static Item get_item(String name,String imageUrl){
         String[] subName = (name.split("\\."))[0].split("_");
-
         return new Item(subName[0],imageUrl,subName[1]);
     }
     public static String get_name(Item item){
-        return  item.getName() + "_" + item.getId() + ".jpg";
+        return  item.getName() + "_" + item.getId();
     }
 
     ImageButton back_main;
@@ -138,11 +138,11 @@ public class FaceID extends AppCompatActivity {
             @Override
             public void onDeleteClick(int position) {
                 String name_delete = get_name(items.get(position));
-                delete_image.setValue(name_delete);
-                storageRef.child(name_delete).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                storageRef.child(name_delete + ".jpg").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
                         change_image.setValue(1);
+                        change_video.setValue("DEL_" + name_delete);
                     }
                 });
             }
