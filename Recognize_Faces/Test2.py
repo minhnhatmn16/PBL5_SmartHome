@@ -3,7 +3,7 @@ import urllib.request
 import numpy as np
 
 import os
-url = 'http://192.168.0.7/cam-lo.jpg'
+url = 'http://192.168.0.4/cam-lo.jpg'
 # url = 'http://192.168.111.172/cam-lo.jpg'
 
 cam = cv2.VideoCapture(0)

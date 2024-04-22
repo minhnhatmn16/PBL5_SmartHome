@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     Float val_tempF;
     TextView tempF;
 
+    ImageButton door;
+
     DatabaseReference db_gas;
     Integer val_gas;
     ImageButton gas;
@@ -82,8 +84,9 @@ public class MainActivity extends AppCompatActivity {
 //        db_tempF = database.getReference("tempF");
 //        tempF = findViewById(R.id.tempF);
 
-        db_gas = database.getReference("gas");
-        gas = findViewById(R.id.gas);
+//        db_gas = database.getReference("gas");
+
+        door = findViewById(R.id.door);
 
 
         // Firebase Value Change
@@ -146,22 +149,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        db_gas.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                val_gas = snapshot.getValue(Integer.class);
-                if (val_gas > 500){
-                    gas.setBackgroundResource(R.drawable.gas_fire);
-                } else {
-                    gas.setBackgroundResource(R.drawable.gas_nofire);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+//        db_gas.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                val_gas = snapshot.getValue(Integer.class);
+//                if (val_gas > 500){
+//                    gas.setBackgroundResource(R.drawable.gas_fire);
+//                } else {
+//                    gas.setBackgroundResource(R.drawable.gas_nofire);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
 
         // Click Image Button
         light.setOnClickListener(new View.OnClickListener() {
@@ -176,6 +179,14 @@ public class MainActivity extends AppCompatActivity {
                     light.setBackgroundResource(R.drawable.off);
                     db_light.setValue(val_light);
                 }
+            }
+        });
+
+        door.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, History.class);
+                startActivity(intent);
             }
         });
 

@@ -1,59 +1,6 @@
-# import cv2
-# import urllib.request
-# import numpy as np
-#
-# url = 'http://192.168.0.8/cam-lo.jpg'
-#
-# while (True):
-#     img = urllib.request.urlopen(url)
-#     img_np = np.array(bytearray(img.read()), dtype=np.uint8)
-#     frame = cv2.imdecode(img_np,-1)
-#     cv2.imshow("img", frame)
-#     if cv2.waitKey(10) & 0xFF == ord('q'):
-#         frame.release()
-#         cv2.destroyAllWindows()
-#         break
-
-# import cv2
-# import urllib.request
-# import numpy as np
-#
-# url = 'http://192.168.0.8/cam-lo.jpg'
-#
-# while (True):
-#     img = urllib.request.urlopen(url)
-#     img_np = np.array(bytearray(img.read()), dtype=np.uint8)
-#     frame = cv2.imdecode(img_np, -1)
-#     # convert frame(urllib) to img(opencv)
-#     ret, buffer = cv2.imencode('.jpg', frame)
-#     img = buffer.tobytes()
-#
-#     cv2.imshow("img",cv2.imdecode(np.frombuffer(img, dtype=np.uint8),-1))
-#     if cv2.waitKey(10) & 0xFF == ord('q'):
-#         frame.release()
-#         cv2.destroyAllWindows()
-#         break
-
-# import cv2
-# import urllib.request
-# import numpy as np
-#
-# url = 'http://192.168.0.8/cam-lo.jpg'
-#
-# while (True):
-#     resp = urllib.request.urlopen(url)
-#     img = np.asarray(bytearray(resp.read()), dtype="uint8")
-#     img = cv2.imdecode(img, cv2.IMREAD_COLOR)
-#     cv2.imshow('image', img)
-#
-#     if cv2.waitKey(1) & 0xFF == ord('q'):
-#         break
-#
-# cv2.destroyAllWindows()
-
 # url = 'http://192.168.0.7/cam-lo.jpg'
 # url = 'http://192.168.111.172/cam-lo.jpg'
-url = 'http://192.168.0.6/cam-lo.jpg'
+url = 'http://192.168.0.4/cam-lo.jpg'
 
 import urllib.request
 import cv2

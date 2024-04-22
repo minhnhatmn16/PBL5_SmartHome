@@ -1,5 +1,6 @@
 import os.path
 import time
+from datetime import datetime
 
 import firebase_admin
 from PIL.Image import Image
@@ -9,10 +10,10 @@ import cv2
 import numpy as np
 
 
-url = 'http://192.168.0.6/cam-lo.jpg'
+# url = 'http://192.168.0.4/cam-lo.jpg'
 # url = 'http://192.168.0.7/cam-lo.jpg'
 # url = 'http://192.168.0.8/cam-lo.jpg'
-
+url = 'http://192.168.0.7/cam-lo.jpg'
 
 # Recognition
 recognizer = cv2.face.LBPHFaceRecognizer.create()
@@ -33,10 +34,11 @@ firebase_admin.initialize_app(cred,
      'databaseURL' : 'https://smarthome-6ad5a-default-rtdb.firebaseio.com/'})
 bucket = storage.bucket()
 ref = db.reference('change_video')
-
+temp = 0
 # Open door
 ref_door = db.reference('door')
 
+date_format = "%y%m%d%H%M%S%f"
 
 
 def check(s):
@@ -48,12 +50,15 @@ def check(s):
 
 val = 0
 face_id = ""
-
+door_open = 0
 def handle_change(event):
     global val, face_id
     val, face_id = check(event.data)
-
+def handle_change_door(event):
+    global  door_open
+    door_open = event.data
 ref.listen(handle_change)
+ref_door.listen(handle_change_door)
 
 def train_new(imagePath):
     PIL_img = Image.open(imagePath).convert('L')
@@ -83,7 +88,6 @@ def add_faceid(face_id):
         if (cv2.waitKey(delay) & 0xFF == 27) or (count >= 60):
             break
     print("\n Da lay du lieu thanh cong")
-
 while True:
     while val == 0:
         resp = urllib.request.urlopen(url)
@@ -99,9 +103,13 @@ while True:
         for (x, y, w, h) in faces:
             cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
             id, confidence = recognizer.predict(gray[y:y + h, x:x + w])
-            if (confidence < 100):
-                id = names[id]
+            if confidence < 100 and door_open == 0:
+                current_date_time = datetime.now()
+                date = current_date_time.strftime(date_format)
+                ref = db.reference('history')
+                ref.update({date: str(id)})
                 ref_door.set(1)
+                door_open = 1
             else:
                 id = "Unknown"
             confidence = " {0}%".format(round(100 - confidence))
