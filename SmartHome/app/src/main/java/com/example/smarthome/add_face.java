@@ -125,8 +125,8 @@ public class add_face extends AppCompatActivity {
     public String get_rand(){
         StringBuilder sb = new StringBuilder();
         sb.append(sdf.format(new Date()));
-        for (int i=0; i<8; i++)
-            sb.append(CHARACTERS.charAt(rand.nextInt(CHARACTERS.length())));
+//        for (int i=0; i<8; i++)
+//            sb.append(CHARACTERS.charAt(rand.nextInt(CHARACTERS.length())));
         return sb.toString();
     }
 

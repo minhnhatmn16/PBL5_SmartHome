@@ -20,6 +20,16 @@ cam.set(4, 480)
 minW = 0.1 * cam.get(3)
 minH = 0.1 * cam.get(4)
 
+path = 'dataset'
+def get_name(path,id):
+    imagePaths = [os.path.join(path, f) for f in os.listdir(path)]
+    for imagePath in imagePaths:
+        temp = os.path.split(imagePath)[-1].split(".")[0].split("_")
+        get_id = int(temp[1][6:15])
+
+        if (get_id == id):
+            return temp[0]
+
 while True:
     ret, img = cam.read()
 
@@ -37,7 +47,8 @@ while True:
         id, confidence = recognizer.predict(gray[y:y + h, x:x + w])
 
         if (confidence < 100):
-            id = names[id]
+            id = get_name(path, id)
+            print(id)
         else:
             id = "Unknown"
 

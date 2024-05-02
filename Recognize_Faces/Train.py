@@ -19,7 +19,9 @@ def getImagesAndLabels(path):
         PIL_img = Image.open(imagePath).convert('L')
         img_numpy = np.array(PIL_img, 'uint8')
 
-        id = int(os.path.split(imagePath)[-1].split(".")[1])
+        # id = int(os.path.split(imagePath)[-1].split(".")[1])
+        id = int(os.path.split(imagePath)[-1].split(".")[0].split("_")[1][6:15])
+        print(id)
         faces = detector.detectMultiScale(img_numpy)
 
         for (x, y, w, h) in faces:
