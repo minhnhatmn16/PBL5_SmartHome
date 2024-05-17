@@ -1,6 +1,6 @@
-# url = 'http://192.168.0.7/cam-lo.jpg'
+url = 'http://192.168.0.12/cam-lo.jpg'
 # url = 'http://192.168.111.172/cam-lo.jpg'
-url = 'http://192.168.0.4/cam-lo.jpg'
+# url = 'http://192.168.0.4/cam-lo.jpg'
 
 import urllib.request
 import cv2
@@ -21,7 +21,7 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 
 id = 0
 
-names = ['Minh Nhat','Duy Tin','Anh Quan','Ngoc Anh']
+# names = ['Minh Nhat','Duy Tin','Anh Quan','Ngoc Anh']
 
 # cam = cv2.VideoCapture(0)
 # cam.set(3, 640)
@@ -51,7 +51,7 @@ while True:
 
         if (confidence < 100):
 
-            id = names[id]
+            # id = names[id]
             ref.update({"door" : 1})
         else:
             id = "Unknown"

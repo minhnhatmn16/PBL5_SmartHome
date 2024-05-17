@@ -6,11 +6,11 @@
 // const char* WIFI_SSID = "banh";
 // const char* WIFI_PASS = "12345678";
 
-const char* WIFI_SSID = "Hello";
-const char* WIFI_PASS = "012345678";
+// const char* WIFI_SSID = "Hello";
+// const char* WIFI_PASS = "012345678";
 
-// const char* WIFI_SSID = "mangmiennui";
-// const char* WIFI_PASS = "bkdn2003";
+const char* WIFI_SSID = "mangmiennui";
+const char* WIFI_PASS = "bkdn2003";
 
 WebServer server(80);
  
@@ -81,12 +81,12 @@ void  setup(){
   Serial.print("http://");
   Serial.println(WiFi.localIP());
   Serial.println("  /cam-lo.jpg");
-  Serial.println("  /cam-hi.jpg");
-  Serial.println("  /cam-mid.jpg");
+  // Serial.println("  /cam-hi.jpg");
+  // Serial.println("  /cam-mid.jpg");
  
   server.on("/cam-lo.jpg", handleJpgLo);
-  server.on("/cam-hi.jpg", handleJpgHi);
-  server.on("/cam-mid.jpg", handleJpgMid);
+  // server.on("/cam-hi.jpg", handleJpgHi);
+  // server.on("/cam-mid.jpg", handleJpgMid);
  
   server.begin();
 }

@@ -10,8 +10,7 @@ import cv2
 import numpy as np
 
 
-# url = 'http://192.168.0.7/cam-lo.jpg'
-url = 'http://192.168.43.78/cam-lo.jpg'
+url = 'http://192.168.0.12/cam-lo.jpg'
 
 
 # Recognition
@@ -21,7 +20,6 @@ faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 font = cv2.FONT_HERSHEY_SIMPLEX
 minW = 0.1 * 1024
 minH = 0.1 * 768
-names = ['Minh Nhat', 'Duy Tin', 'Anh Quan', 'Ngoc Anh']
 
 # Firebase
 cred = credentials.Certificate("serviceAccountKey.json")
@@ -31,6 +29,7 @@ firebase_admin.initialize_app(cred,
 bucket = storage.bucket()
 ref_change = db.reference('change_video')
 temp = 0
+
 # Open door
 ref_door = db.reference('door')
 
@@ -114,7 +113,6 @@ def add_faceid(face_id):
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
             count += 1
-            # cv2.imwrite(f"dataset/User." + face_id + "." + str(count) + ".jpg", gray[y:y + h, x:x + w])
             cv2.imwrite("dataset/" + face_id + '.' + str(count) + ".jpg", gray[y:y + h, x:x + w])
 
         if (cv2.waitKey(delay) & 0xFF == 27) or (count >= 60):

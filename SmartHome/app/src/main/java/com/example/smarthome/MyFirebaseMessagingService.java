@@ -55,7 +55,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.drawable.ic_android_black_24dp)
+                        .setSmallIcon(R.drawable.danger)
                         .setContentTitle(title)
                         .setContentText(body)
                         .setAutoCancel(true)
