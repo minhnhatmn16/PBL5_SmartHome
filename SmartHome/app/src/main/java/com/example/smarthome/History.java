@@ -1,10 +1,19 @@
 package com.example.smarthome;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.Switch;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -31,14 +40,25 @@ import java.util.List;
 
 public class History extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference change_history = database.getReference("change_history");
-
     DatabaseReference history = database.getReference("history");
+    DatabaseReference door = database.getReference("door");
+    Switch switch_door;
     ImageButton back_main_his;
     SimpleDateFormat targetFormat = new SimpleDateFormat("dd/MM/yy HH/mm/ss");
-    public String get_history(String s){
-        return  s.charAt(4) + s.charAt(5) + "/" + s.charAt(2) +s.charAt(3) + "/20" + s.charAt(0) +s.charAt(1)+"  " +
-                s.charAt(6) + s.charAt(7) + ":" + s.charAt(8) + s.charAt(9) +":" + s.charAt(10) +s.charAt(11);
+    public boolean check(String s){
+        return s.contains(Character.toString('~'));
+    }
+    public String get_time(String s){
+        String year = "20" + s.substring(0,2);
+        String month = s.substring(2,4);
+        String day = s.substring(4,6);
+        String hour = s.substring(6,8);
+        String minute = s.substring(8,10);
+        String second = s.substring(10,12);
+        return day + "/" + month + "/" + year + " " + hour + ":" + minute + ":" + second;
+    }
+    public String get_id(String s){
+        return s.split("~")[1];
     }
 
     @Override
@@ -52,7 +72,6 @@ public class History extends AppCompatActivity {
             return insets;
         });
 
-
         back_main_his = findViewById(R.id.back_main_his);
         back_main_his.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,22 +81,34 @@ public class History extends AppCompatActivity {
             }
         });
 
+        switch_door = findViewById(R.id.switch_door);
+        door.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int val_door = snapshot.getValue(Integer.class);
+                if (val_door == 1){
+                    switch_door.setChecked(true);
+                } else {
+                    switch_door.setChecked(false);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        switch_door.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch_door.setChecked(true);
+                door.setValue(1);
+            }
+        });
+
+
         RecyclerView recyclerView = findViewById(R.id.recyclerView_his);
         List<Item_his> items = new ArrayList<>();
         MyApdapter_his apdapterHis = new MyApdapter_his(getApplicationContext(), items);
-
-
-//        history.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
         history.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -86,7 +117,11 @@ public class History extends AppCompatActivity {
                 for (DataSnapshot data : snapshot.getChildren()) {
                     String key = data.getKey();
                     String value = data.getValue(String.class);
-                    tempList.add(new Item_his(value, get_history(key), "123", "123"));
+                    if (check(value)){
+                        tempList.add(new Item_his( value.split("~")[0], get_time(key), key, value.split("~")[1]));
+                    } else {
+                        tempList.add(new Item_his( value, get_time(key), "",""));
+                    }
                 }
                 for (int i = tempList.size() - 1; i >= 0; i--)
                     items.add(tempList.get(i));
@@ -101,5 +136,74 @@ public class History extends AppCompatActivity {
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(apdapterHis);
+        apdapterHis.setListener(new MyApdapter_his.OnItemClickListener() {
+            @Override
+            public void onItemClick(Item_his item) {
+                String selectedName = item.getName();
+//                String selectedTime = item.getTime();
+//                Toast.makeText(getApplicationContext(), "Selected Item: " + selectedName + " - " + selectedTime, Toast.LENGTH_SHORT).show();
+                if (item.getImageUrl() != "")
+                    showImageDialog(item.getImageUrl()+".jpg");
+            }
+        });
+    }
+
+    public void showImageDialog(String imageName) {
+        // Tạo dialog để hiển thị hình ảnh
+        final Dialog dialog = new Dialog(History.this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_image); // Layout cho dialog (có một ImageView để hiển thị hình ảnh)
+
+        // Lấy ImageView từ layout dialog
+        ImageView dialogImageView = dialog.findViewById(R.id.dialog_image_view);
+//        dialogImageView.setImageResource(R.drawable.face); // Set hình ảnh từ drawable
+//
+//        // Đặt kích thước hình ảnh
+//        ViewGroup.LayoutParams layoutParams = dialogImageView.getLayoutParams();
+//        layoutParams.width = dpToPx(300); // Chuyển đổi từ dp sang px
+//        layoutParams.height = dpToPx(300);
+//
+//        // Close dialog khi bấm ra ngoài hình ảnh
+//        dialog.setCanceledOnTouchOutside(true);
+//
+//        // Hiển thị dialog
+//        dialog.show();
+
+
+        // Tạo một StorageReference từ Firebase Storage
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageHistoryRef = storage.getReference().child("history"); // Thư mục chứa hình ảnh
+        StorageReference imageRef = storageHistoryRef.child(imageName); // Tạo đường dẫn đầy đủ của hình ảnh
+
+        // Tải hình ảnh từ Firebase Storage và hiển thị vào ImageView
+        imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                dialogImageView.setImageBitmap(bitmap);
+            }
+
+        });
+
+
+        // Đặt kích thước hình ảnh
+        ViewGroup.LayoutParams layoutParams = dialogImageView.getLayoutParams();
+        layoutParams.width = dpToPx(300); // Chuyển đổi từ dp sang px
+        layoutParams.height = dpToPx(300);
+
+
+        // Close dialog khi bấm ra ngoài hình ảnh
+        dialog.setCanceledOnTouchOutside(true);
+
+        // Hiển thị dialog
+        dialog.show();
+    }
+
+// Hàm chuyển đổi dp sang px
+    public int dpToPx(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return Math.round((float) dp * density);
     }
 }
+

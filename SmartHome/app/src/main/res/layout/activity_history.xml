@@ -27,22 +27,43 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginLeft="10dp"/>
 
+<!--            <TextView-->
+<!--                android:id="@+id/textView_his"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="History"-->
+<!--                android:textSize="50dp"-->
+<!--                android:fontFamily="sans-serif-medium"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textStyle="bold"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintHorizontal_bias="0.498"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent"/>-->
 
-            <TextView
-                android:id="@+id/textView_his"
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp">
+            <Switch
+                android:id="@+id/switch_door"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="History"
-                android:textSize="50dp"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                android:thumb="@drawable/thumb"
+                android:track="@drawable/track"
+                android:showText="true"
+                android:textOn="Unlocked"
+                android:textOff="Locked"
+                android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView_his"

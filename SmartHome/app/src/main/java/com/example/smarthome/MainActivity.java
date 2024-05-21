@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         faceid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, FaceID.class);
+                Intent intent = new Intent(MainActivity.this, add_face.class);
                 startActivity(intent);
             }
         });

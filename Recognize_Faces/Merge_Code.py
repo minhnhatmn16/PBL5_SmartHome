@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 
 
-url = 'http://192.168.0.12/cam-lo.jpg'
+url = 'http://192.168.0.6/cam-lo.jpg'
 
 
 # Recognition

@@ -84,7 +84,7 @@ public class add_face extends AppCompatActivity {
         back_faceid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(add_face.this, FaceID.class);
+                Intent intent = new Intent(add_face.this, MainActivity.class);
                 startActivity(intent);
             }
         });

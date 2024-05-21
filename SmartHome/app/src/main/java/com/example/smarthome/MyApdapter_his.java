@@ -3,6 +3,7 @@ package com.example.smarthome;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class MyApdapter_his extends RecyclerView.Adapter<Myviewholder_his> {
+    private OnItemClickListener listener;
     Context context;
     List<Item_his> items;
 
@@ -29,13 +31,26 @@ public class MyApdapter_his extends RecyclerView.Adapter<Myviewholder_his> {
 
     @Override
     public void onBindViewHolder(@NonNull Myviewholder_his holder, int position) {
-//        Picasso.get().load(items.get(position).getImageUrl()).into(holder.imageView);
         holder.nameView.setText(items.get(position).getName());
         holder.timeView.setText(items.get(position).getTime());
+
+        Item_his currentItem = items.get(position);
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(currentItem);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(Item_his item);
+    }
+    public void setListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
 }
