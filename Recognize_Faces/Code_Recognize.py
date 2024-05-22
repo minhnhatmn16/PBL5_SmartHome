@@ -8,11 +8,12 @@ from firebase_admin import credentials, db, storage
 import urllib.request
 import cv2
 import numpy as np
+import FCM_Send as fcm
 
+url = 'http://192.168.0.5/cam-lo.jpg'
+# url = 'http://192.168.43.78/cam-lo.jpg'
 
-# url = 'http://192.168.0.12/cam-lo.jpg'
-url = 'http://192.168.43.78/cam-lo.jpg'
-
+tokens = ["fUGLukZqRVSaw94qtv_0Gr:APA91bHk6uUCPnSMQc6fLLf5zmy3nzAIbalIJpvzhuDJVhUOppkq_uqnD6hRQ_VCRKQyRplTt3DQbuXYIyzxIEURtaYldcQi5Ewd19_ueThYuyZTmyiLsCA7N3KYm00vdqvG1XX78f-r"]
 
 # Recognition
 recognizer = cv2.face.LBPHFaceRecognizer.create()
@@ -28,11 +29,10 @@ firebase_admin.initialize_app(cred,
                               {'storageBucket': 'smarthome-6ad5a.appspot.com',
                                'databaseURL': 'https://smarthome-6ad5a-default-rtdb.firebaseio.com/'})
 bucket = storage.bucket()
-ref_change = db.reference('change_video')
-temp = 0
-
-# Open door
+ref_video = db.reference('change_video')
 ref_door = db.reference('door')
+ref_unknown = db.reference('unknown')
+
 
 date_format = "%y%m%d%H%M%S%f"
 
@@ -51,9 +51,10 @@ def get_name(path, id):
 
 def check(s):
     if s[:3] == 'ADD':
-        return 1, s[4:]
-    if s[:3] == 'DEL':
-        return 2, s[4:]
+        get_video(s[4:])
+        return 0, ""
+    if s == 'TRAIN_DATA':
+        return 1, ""
     return 0, ""
 
 
@@ -61,43 +62,31 @@ val = 0
 face_id = ""
 door_open = 0
 
-
-def handle_change(event):
+def handle_change_video(event):
     global val, face_id
     val, face_id = check(event.data)
-
-
 def handle_change_door(event):
     global door_open
     door_open = event.data
 
-
-ref_change.listen(handle_change)
+ref_video.listen(handle_change_video)
 ref_door.listen(handle_change_door)
 
 
-def getImagesAndLabels(path):
-    imagePaths = [os.path.join(path, f) for f in os.listdir(path)]
-    faceSamples = []
-    ids = []
+def get_video(temp_face_id):
+    blob = bucket.blob("video/" + temp_face_id)
+    blob.download_to_filename("video_train/" + temp_face_id + ".mp4")
+    while not os.path.exists("video_train/" + temp_face_id + ".mp4"):
+        print("Downloading video...")
+    ref_video.set('')
+    print(" Download video successfully")
+    add_faceid(temp_face_id)
 
-    for imagePath in imagePaths:
-
-        PIL_img = Image.open(imagePath).convert('L')
-        img_numpy = np.array(PIL_img, 'uint8')
-
-        id = int(os.path.split(imagePath)[-1].split(".")[0].split("_")[1][6:15])
-        faces = faceCascade.detectMultiScale(img_numpy)
-
-        for (x, y, w, h) in faces:
-            faceSamples.append(img_numpy[y:y + h, x:x + w])
-            ids.append(id)
-
-    return faceSamples, ids
-
-
-def add_faceid(face_id):
-    video_path = 'video_train/' + face_id + ".mp4"
+def add_faceid(temp_face_id):
+    while not os.path.exists("video_train/" + temp_face_id + ".mp4"):
+        print(".")
+    print("Get faceid...")
+    video_path = 'video_train/' + temp_face_id + ".mp4"
     capture = cv2.VideoCapture(video_path)
     face_detector = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
     count = 0
@@ -112,18 +101,35 @@ def add_faceid(face_id):
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
             count += 1
-            cv2.imwrite("dataset/" + face_id + '.' + str(count) + ".jpg", gray[y:y + h, x:x + w])
+            cv2.imwrite("dataset/" + temp_face_id + '.' + str(count) + ".jpg", gray[y:y + h, x:x + w])
 
         if (cv2.waitKey(delay) & 0xFF == 27) or (count >= 60):
             break
-    print("\n Đã lấy dữ liệu thành công")
-    print("\n Train dữ liệu...")
+    print("\n Get faceid successfully")
+
+def getImagesAndLabels(path):
+    imagePaths = [os.path.join(path, f) for f in os.listdir(path)]
+    faceSamples = []
+    ids = []
+
+    for imagePath in imagePaths:
+        PIL_img = Image.open(imagePath).convert('L')
+        img_numpy = np.array(PIL_img, 'uint8')
+        id = int(os.path.split(imagePath)[-1].split(".")[0].split("_")[1][6:15])
+        faces = faceCascade.detectMultiScale(img_numpy)
+        for (x, y, w, h) in faces:
+            faceSamples.append(img_numpy[y:y + h, x:x + w])
+            ids.append(id)
+    return faceSamples, ids
+def traindata():
+    print("\n Trainning...")
     faces_, ids = getImagesAndLabels(path)
     recognizer.train(faces_, np.array(ids))
 
     recognizer.write('trainer/trainer.yml')
-    print('\n Train dữ liệu thành công')
-
+    print('\n Train successfully')
+    fcm.sendPush("Train data", "Train data successfully", tokens)
+    ref_video.set("")
 while True:
     while val == 0:
         resp = urllib.request.urlopen(url)
@@ -139,32 +145,25 @@ while True:
         for (x, y, w, h) in faces:
             cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
             id, confidence = recognizer.predict(gray[y:y + h, x:x + w])
-            if confidence < 100 and door_open == 0:
-                current_date_time = datetime.now()
-                date = current_date_time.strftime(date_format)
-                ref_his = db.reference('history')
-                ref_his.update({date: get_name(path, id)})
-                ref_door.set(1)
-                door_open = 1
+            if door_open == 0:
+                if confidence < 100:
+                    current_date_time = datetime.now()
+                    date = current_date_time.strftime(date_format)
+                    ref_his = db.reference('history')
+                    ref_his.update({date: get_name(path, id)})
+                    ref_door.set(1)
+                    door_open = 1
+                else:
+                    ref_unknown.set(1)
+                    id = "Unknown"
             else:
-                id = "Unknown"
+                id = ""
             confidence = " {0}%".format(round(100 - confidence))
             cv2.putText(img, str(id), (x + 10, y), font, 1, (0, 0, 255), 2)
-        cv2.imshow('Nhan dien khuon mat', img)
+        cv2.imshow('Face Recognition', img)
         k = cv2.waitKey(10) & 0xff
         if (k == 27):
             break
+    traindata()
     cv2.destroyAllWindows()
 
-    downloading_complete = False
-    if val == 1:
-        temp_face_id = face_id
-        blob = bucket.blob("video/" + temp_face_id)
-        blob.download_to_filename("video_train/" + temp_face_id + ".mp4")
-        while not os.path.exists("video_train/" + temp_face_id + ".mp4"):
-            print("Downloading...")
-        ref_change.set('')
-        print(" Lấy video face thành công")
-        add_faceid(temp_face_id)
-    elif val == 2:
-        val = 0

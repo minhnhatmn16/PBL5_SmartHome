@@ -139,9 +139,6 @@ public class History extends AppCompatActivity {
         apdapterHis.setListener(new MyApdapter_his.OnItemClickListener() {
             @Override
             public void onItemClick(Item_his item) {
-                String selectedName = item.getName();
-//                String selectedTime = item.getTime();
-//                Toast.makeText(getApplicationContext(), "Selected Item: " + selectedName + " - " + selectedTime, Toast.LENGTH_SHORT).show();
                 if (item.getImageUrl() != "")
                     showImageDialog(item.getImageUrl()+".jpg");
             }
@@ -152,29 +149,15 @@ public class History extends AppCompatActivity {
         // Tạo dialog để hiển thị hình ảnh
         final Dialog dialog = new Dialog(History.this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_image); // Layout cho dialog (có một ImageView để hiển thị hình ảnh)
+        dialog.setContentView(R.layout.dialog_image);
 
         // Lấy ImageView từ layout dialog
         ImageView dialogImageView = dialog.findViewById(R.id.dialog_image_view);
-//        dialogImageView.setImageResource(R.drawable.face); // Set hình ảnh từ drawable
-//
-//        // Đặt kích thước hình ảnh
-//        ViewGroup.LayoutParams layoutParams = dialogImageView.getLayoutParams();
-//        layoutParams.width = dpToPx(300); // Chuyển đổi từ dp sang px
-//        layoutParams.height = dpToPx(300);
-//
-//        // Close dialog khi bấm ra ngoài hình ảnh
-//        dialog.setCanceledOnTouchOutside(true);
-//
-//        // Hiển thị dialog
-//        dialog.show();
-
 
         // Tạo một StorageReference từ Firebase Storage
-
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageHistoryRef = storage.getReference().child("history"); // Thư mục chứa hình ảnh
-        StorageReference imageRef = storageHistoryRef.child(imageName); // Tạo đường dẫn đầy đủ của hình ảnh
+        StorageReference storageHistoryRef = storage.getReference().child("history");
+        StorageReference imageRef = storageHistoryRef.child(imageName);
 
         // Tải hình ảnh từ Firebase Storage và hiển thị vào ImageView
         imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -186,12 +169,10 @@ public class History extends AppCompatActivity {
 
         });
 
-
         // Đặt kích thước hình ảnh
         ViewGroup.LayoutParams layoutParams = dialogImageView.getLayoutParams();
-        layoutParams.width = dpToPx(300); // Chuyển đổi từ dp sang px
+        layoutParams.width = dpToPx(300);
         layoutParams.height = dpToPx(300);
-
 
         // Close dialog khi bấm ra ngoài hình ảnh
         dialog.setCanceledOnTouchOutside(true);
@@ -200,7 +181,6 @@ public class History extends AppCompatActivity {
         dialog.show();
     }
 
-// Hàm chuyển đổi dp sang px
     public int dpToPx(int dp) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round((float) dp * density);

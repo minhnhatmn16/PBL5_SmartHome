@@ -6,11 +6,11 @@
 // const char* WIFI_SSID = "banh";
 // const char* WIFI_PASS = "12345678";
 
-const char* WIFI_SSID = "Hello";
-const char* WIFI_PASS = "012345678";
+// const char* WIFI_SSID = "Hello";
+// const char* WIFI_PASS = "012345678";
 
-// const char* WIFI_SSID = "mangmiennui";
-// const char* WIFI_PASS = "bkdn2003";
+const char* WIFI_SSID = "mangmiennui";
+const char* WIFI_PASS = "bkdn2003";
 
 WebServer server(80);
  

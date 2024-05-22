@@ -49,7 +49,7 @@ public class add_face extends AppCompatActivity {
     StorageReference storageReference;
     LinearProgressIndicator progressIndicator;
     Uri video;
-    Button selectVideo,uploadVideo;
+    Button selectVideo,uploadVideo,traindata;
     ImageView imageView;
     EditText name;
     ImageButton back_faceid;
@@ -98,7 +98,7 @@ public class add_face extends AppCompatActivity {
         progressIndicator = findViewById(R.id.process);
         selectVideo = findViewById(R.id.selectVideo);
         uploadVideo = findViewById(R.id.uploadVideo);
-
+        traindata = findViewById(R.id.traindata);
         selectVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,6 +117,13 @@ public class add_face extends AppCompatActivity {
                     uploadVideo(video);
             }
         });
+
+        traindata.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                change_video.setValue("TRAIN_DATA");
+            }
+        });
     }
 
     String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -125,8 +132,6 @@ public class add_face extends AppCompatActivity {
     public String get_rand(){
         StringBuilder sb = new StringBuilder();
         sb.append(sdf.format(new Date()));
-//        for (int i=0; i<8; i++)
-//            sb.append(CHARACTERS.charAt(rand.nextInt(CHARACTERS.length())));
         return sb.toString();
     }
 

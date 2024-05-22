@@ -21,22 +21,37 @@ def sendPush(title, msg, registration_token, dataObject=None):
         tokens=registration_token,
     )
     response = messaging.send_multicast(message)
-    print("Successfully ", response)
+    print("Successfully " + title)
 
 
 value_gas = db.reference("gas")
+value_unknown = db.reference("unknown")
+
 last_sent_time = 0
 gas = 0
+unknown = 0
 def handle_gas(event):
     global gas
     gas = event.data
 
+def handle_unknown(event):
+    global unknown
+    unknown = event.data
 
 value_gas.listen(handle_gas)
+value_unknown.listen(handle_unknown)
 while True:
     if gas == 1:
         temp = time.time()
         if temp - last_sent_time >= 10:
             last_sent_time = temp
             sendPush("Gas Leakage Alert", "There is a gas leakage in your kitchen", tokens)
-            print(last_sent_time)
+            print(temp)
+    if unknown == 1:
+        temp = time.time()
+        sendPush("Security Alert", "Unidentified Person Detected", tokens)
+        value_unknown.set(0)
+        unknown == 0
+        print(temp)
+
+
