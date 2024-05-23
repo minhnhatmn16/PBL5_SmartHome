@@ -74,18 +74,19 @@ ref_door.listen(handle_change_door)
 
 
 def get_video(temp_face_id):
+    ref_video.set('')
     blob = bucket.blob("video/" + temp_face_id)
+    print("Downloading video ...")
     blob.download_to_filename("video_train/" + temp_face_id + ".mp4")
     while not os.path.exists("video_train/" + temp_face_id + ".mp4"):
-        print("Downloading video...")
-    ref_video.set('')
-    print(" Download video successfully")
+        print(".")
+    print("Download video successfully")
     add_faceid(temp_face_id)
 
 def add_faceid(temp_face_id):
     while not os.path.exists("video_train/" + temp_face_id + ".mp4"):
         print(".")
-    print("Get faceid...")
+    print("Get faceid ...")
     video_path = 'video_train/' + temp_face_id + ".mp4"
     capture = cv2.VideoCapture(video_path)
     face_detector = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
@@ -105,7 +106,8 @@ def add_faceid(temp_face_id):
 
         if (cv2.waitKey(delay) & 0xFF == 27) or (count >= 60):
             break
-    print("\n Get faceid successfully")
+    print("Get faceid successfully")
+    fcm.sendPush("Add FaceID", "Add FaceID successfully", tokens)
 
 def getImagesAndLabels(path):
     imagePaths = [os.path.join(path, f) for f in os.listdir(path)]
@@ -122,14 +124,17 @@ def getImagesAndLabels(path):
             ids.append(id)
     return faceSamples, ids
 def traindata():
-    print("\n Trainning...")
+    print("Trainning ...")
     faces_, ids = getImagesAndLabels(path)
     recognizer.train(faces_, np.array(ids))
 
     recognizer.write('trainer/trainer.yml')
-    print('\n Train successfully')
+    print("Train successfully")
     fcm.sendPush("Train data", "Train data successfully", tokens)
     ref_video.set("")
+
+count_unknown = 0
+last_time = 0
 while True:
     while val == 0:
         resp = urllib.request.urlopen(url)
@@ -153,11 +158,39 @@ while True:
                     ref_his.update({date: get_name(path, id)})
                     ref_door.set(1)
                     door_open = 1
+                    count_unknown = 0
                 else:
-                    ref_unknown.set(1)
+                    count_unknown += 1
+                    print(count_unknown)
+                    temp_time = time.time()
+                    if count_unknown >= 15 and temp_time-last_time >= 10:
+                        fcm.sendPush("Security Alert", "Unidentified Person Detected", tokens)
+
+                        last_time = temp_time
+                        current_date_time = datetime.now()
+                        date = current_date_time.strftime(date_format)
+                        ref_his = db.reference('history')
+                        name_img = date + ".jpg"
+
+                        file_path = "history/" + name_img
+
+                        cv2.imwrite(file_path, img)
+                        while not os.path.exists(file_path):
+                            print(".")
+
+                        bucket = storage.bucket()
+                        blob = bucket.blob(file_path)
+                        blob.upload_from_filename(file_path)
+                        print("Uploaded image unknown successfully!")
+
+                        count_unknown = 0
+                        ref_his.update({date: "Unknown~123456789"})
                     id = "Unknown"
             else:
                 id = ""
+                count_unknown = 0
+
+
             confidence = " {0}%".format(round(100 - confidence))
             cv2.putText(img, str(id), (x + 10, y), font, 1, (0, 0, 255), 2)
         cv2.imshow('Face Recognition', img)
