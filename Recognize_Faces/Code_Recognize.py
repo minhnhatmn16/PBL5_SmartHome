@@ -1,7 +1,7 @@
 import os.path
 import time
 from datetime import datetime
-
+import requests
 import firebase_admin
 from PIL import Image
 from firebase_admin import credentials, db, storage
@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 import FCM_Send as fcm
 
-url = 'http://192.168.0.5/cam-lo.jpg'
+url = 'http://192.168.0.11/cam-lo.jpg'
 # url = 'http://192.168.43.78/cam-lo.jpg'
 
 tokens = ["fUGLukZqRVSaw94qtv_0Gr:APA91bHk6uUCPnSMQc6fLLf5zmy3nzAIbalIJpvzhuDJVhUOppkq_uqnD6hRQ_VCRKQyRplTt3DQbuXYIyzxIEURtaYldcQi5Ewd19_ueThYuyZTmyiLsCA7N3KYm00vdqvG1XX78f-r"]
@@ -40,13 +40,20 @@ path = 'dataset'
 
 
 def get_name(path, id):
-    imagePaths = [os.path.join(path, f) for f in os.listdir(path)]
-    for imagePath in imagePaths:
-        temp = os.path.split(imagePath)[-1].split(".")[0].split("_")
-        get_id = int(temp[1][6:15])
-
-        if (get_id == id):
-            return temp[0]
+    # imagePaths = [os.path.join(path, f) for f in os.listdir(path)]
+    # for imagePath in imagePaths:
+    #     temp = os.path.split(imagePath)[-1].split(".")[0].split("_")
+    #     get_id = int(temp[1][6:15])
+    #
+    #     if (get_id == id):
+    #         return temp[0]
+    for root, dirs, files in os.walk(path):
+        for dir_name in dirs:
+            temp = dir_name.split("_")
+            get_id = int(temp[1][6:15])
+            if get_id == id:
+                return temp[0]
+    # return "Unknown"
 
 
 def check(s):
@@ -88,6 +95,8 @@ def add_faceid(temp_face_id):
         print(".")
     print("Get faceid ...")
     video_path = 'video_train/' + temp_face_id + ".mp4"
+    os.makedirs(f'dataset/{temp_face_id}')
+
     capture = cv2.VideoCapture(video_path)
     face_detector = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
     count = 0
@@ -102,26 +111,53 @@ def add_faceid(temp_face_id):
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
             count += 1
-            cv2.imwrite("dataset/" + temp_face_id + '.' + str(count) + ".jpg", gray[y:y + h, x:x + w])
+            # cv2.imwrite("dataset/" + temp_face_id + '.' + str(count) + ".jpg", gray[y:y + h, x:x + w])
+            cv2.imwrite("dataset/" + temp_face_id + "/" + temp_face_id + '.' + str(count) + ".jpg", gray[y:y + h, x:x + w])
 
         if (cv2.waitKey(delay) & 0xFF == 27) or (count >= 60):
             break
     print("Get faceid successfully")
     fcm.sendPush("Add FaceID", "Add FaceID successfully", tokens)
 
+# def getImagesAndLabels(path):
+#     imagePaths = [os.path.join(path, f) for f in os.listdir(path)]
+#     faceSamples = []
+#     ids = []
+#
+#     for imagePath in imagePaths:
+#         PIL_img = Image.open(imagePath).convert('L')
+#         img_numpy = np.array(PIL_img, 'uint8')
+#         id = int(os.path.split(imagePath)[-1].split(".")[0].split("_")[1][6:15])
+#         faces = faceCascade.detectMultiScale(img_numpy)
+#         for (x, y, w, h) in faces:
+#             faceSamples.append(img_numpy[y:y + h, x:x + w])
+#             ids.append(id)
+#     return faceSamples, ids
 def getImagesAndLabels(path):
-    imagePaths = [os.path.join(path, f) for f in os.listdir(path)]
     faceSamples = []
     ids = []
 
-    for imagePath in imagePaths:
-        PIL_img = Image.open(imagePath).convert('L')
-        img_numpy = np.array(PIL_img, 'uint8')
-        id = int(os.path.split(imagePath)[-1].split(".")[0].split("_")[1][6:15])
-        faces = faceCascade.detectMultiScale(img_numpy)
-        for (x, y, w, h) in faces:
-            faceSamples.append(img_numpy[y:y + h, x:x + w])
-            ids.append(id)
+    # Traverse all subdirectories in the given path
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if file.endswith('jpg') or file.endswith('jpeg') or file.endswith('png'):
+                imagePath = os.path.join(root, file)
+
+                PIL_img = Image.open(imagePath).convert('L')
+                img_numpy = np.array(PIL_img, 'uint8')
+
+                id = int(os.path.split(imagePath)[-1].split(".")[0].split("_")[1][6:15])
+                print(id)
+                faces = faceCascade.detectMultiScale(
+                    image=img_numpy,
+                    scaleFactor=1.3,
+                    minNeighbors=5,
+                    minSize=(int(64), int(48)),
+                )
+                for (x, y, w, h) in faces:
+                    faceSamples.append(img_numpy[y:y + h, x:x + w])
+                    ids.append(id)
+
     return faceSamples, ids
 def traindata():
     print("Trainning ...")
@@ -137,13 +173,16 @@ count_unknown = 0
 last_time = 0
 while True:
     while val == 0:
+        # if requests.get(url).status_code != 200:
+        #     cv2.destroyAllWindows()
+        #     continue
         resp = urllib.request.urlopen(url)
         img = np.asarray(bytearray(resp.read()), dtype="uint8")
         img = cv2.imdecode(img, cv2.IMREAD_COLOR)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = faceCascade.detectMultiScale(
             gray,
-            scaleFactor=1.2,
+            scaleFactor=1.3,
             minNeighbors=5,
             minSize=(int(minW), int(minH)),
         )

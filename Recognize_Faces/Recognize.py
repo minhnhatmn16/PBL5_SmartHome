@@ -22,14 +22,20 @@ minH = 0.1 * cam.get(4)
 
 path = 'dataset'
 def get_name(path,id):
-    imagePaths = [os.path.join(path, f) for f in os.listdir(path)]
-    for imagePath in imagePaths:
-        temp = os.path.split(imagePath)[-1].split(".")[0].split("_")
-        get_id = int(temp[1][6:15])
-
-        if (get_id == id):
-            return temp[0]
-
+    # imagePaths = [os.path.join(path, f) for f in os.listdir(path)]
+    # for imagePath in imagePaths:
+    #     temp = os.path.split(imagePath)[-1].split(".")[0].split("_")
+    #     get_id = int(temp[1][6:15])
+    #
+    #     if (get_id == id):
+    #         return temp[0]
+    for root, dirs, files in os.walk(path):
+        for dir_name in dirs:
+            temp = dir_name.split("_")
+            get_id = int(temp[1][6:15])
+            if get_id == id:
+                return temp[0]
+    return "Unknown"
 while True:
     ret, img = cam.read()
 
@@ -37,7 +43,7 @@ while True:
 
     faces = faceCascade.detectMultiScale(
         gray,
-        scaleFactor=1.2,
+        scaleFactor=1.3,
         minNeighbors=5,
         minSize=(int(minW), int(minH)),
     )
@@ -55,7 +61,7 @@ while True:
         confidence = " {0}%".format(round(100 - confidence))
 
         cv2.putText(img, str(id), (x + 10, y), font, 1, (0, 0, 255), 2)
-        # cv2.putText(img, str(confidence), (x + 5, y + h - 5), font, 1, (255, 255, 0), 1)
+        cv2.putText(img, str(confidence), (x + 5, y + h - 5), font, 1, (255, 255, 0), 1)
 
     cv2.imshow('Nhan dien khuon mat', img)
 

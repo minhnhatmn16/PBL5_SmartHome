@@ -42,6 +42,9 @@ public class History extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference history = database.getReference("history");
     DatabaseReference door = database.getReference("door");
+    DatabaseReference rheostat = database.getReference("rheostat");
+
+    int val_rheostat;
     Switch switch_door;
     ImageButton back_main_his;
     SimpleDateFormat targetFormat = new SimpleDateFormat("dd/MM/yy HH/mm/ss");
@@ -97,10 +100,50 @@ public class History extends AppCompatActivity {
 
             }
         });
+        rheostat.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                val_rheostat = snapshot.getValue(Integer.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         switch_door.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch_door.setChecked(true);
+//                switch_door.setChecked(true);
+//                door.setValue(1);
+
+//                switch_door.setOnCheckedChangeListener((button, isChecked) ->{
+//                    if (isChecked == false) {
+//                        if (val_rheostat > 50) {
+//                            switch_door.setChecked(true);
+//                            Toast.makeText(History.this,"The door is not closed yet", Toast.LENGTH_SHORT).show();
+//                        } else {
+//                            door.setValue(0);
+//                        }
+//                    } else {
+//                        door.setValue(1);
+//                    }
+//                });
+
+
+
+
+            }
+        });
+        switch_door.setOnCheckedChangeListener((button, isChecked) ->{
+            if (isChecked == false) {
+                if (val_rheostat > 50) {
+                    switch_door.setChecked(true);
+                    Toast.makeText(History.this,"The door is not closed yet", Toast.LENGTH_SHORT).show();
+                } else {
+                    door.setValue(0);
+                }
+            } else {
                 door.setValue(1);
             }
         });

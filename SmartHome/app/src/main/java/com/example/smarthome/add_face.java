@@ -122,6 +122,7 @@ public class add_face extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 change_video.setValue("TRAIN_DATA");
+                Toast.makeText(add_face.this,"Trainning ...", Toast.LENGTH_SHORT).show();
             }
         });
     }

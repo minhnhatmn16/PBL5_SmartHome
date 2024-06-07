@@ -11,10 +11,10 @@
 
 // #define WIFI_SSID "banh"
 // #define WIFI_PASSWORD "12345678"
-// #define WIFI_SSID "mangmiennui"
-// #define WIFI_PASSWORD "bkdn2003"
-#define WIFI_SSID "Hello"
-#define WIFI_PASSWORD "012345678"
+#define WIFI_SSID "mangmiennui"
+#define WIFI_PASSWORD "bkdn2003"
+// #define WIFI_SSID "Hello"
+// #define WIFI_PASSWORD "012345678"
 
 int led_pin = 2; // D4
 int led_val;
