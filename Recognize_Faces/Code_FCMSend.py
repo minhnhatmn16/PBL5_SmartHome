@@ -25,7 +25,7 @@ def sendPush(title, msg, registration_token, dataObject=None):
 
 
 value_gas = db.reference("gas")
-value_unknown = db.reference("unknown")
+# value_unknown = db.reference("unknown")
 
 last_sent_time = 0
 gas = 0
@@ -34,9 +34,9 @@ def handle_gas(event):
     global gas
     gas = event.data
 
-def handle_unknown(event):
-    global unknown
-    unknown = event.data
+# def handle_unknown(event):
+#     global unknown
+#     unknown = event.data
 
 value_gas.listen(handle_gas)
 value_unknown.listen(handle_unknown)
@@ -47,11 +47,11 @@ while True:
             last_sent_time = temp
             sendPush("Gas Leakage Alert", "There is a gas leakage in your kitchen", tokens)
             print(temp)
-    if unknown == 1:
-        temp = time.time()
-        sendPush("Security Alert", "Unidentified Person Detected", tokens)
-        value_unknown.set(0)
-        unknown == 0
-        print(temp)
+    # if unknown == 1:
+    #     temp = time.time()
+    #     sendPush("Security Alert", "Unidentified Person Detected", tokens)
+    #     value_unknown.set(0)
+    #     unknown == 0
+    #     print(temp)
 
 

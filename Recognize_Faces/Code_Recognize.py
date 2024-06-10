@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 import FCM_Send as fcm
 
-url = 'http://192.168.0.11/cam-lo.jpg'
+url = 'http://192.168.0.8/cam-lo.jpg'
 # url = 'http://192.168.43.78/cam-lo.jpg'
 
 tokens = ["fUGLukZqRVSaw94qtv_0Gr:APA91bHk6uUCPnSMQc6fLLf5zmy3nzAIbalIJpvzhuDJVhUOppkq_uqnD6hRQ_VCRKQyRplTt3DQbuXYIyzxIEURtaYldcQi5Ewd19_ueThYuyZTmyiLsCA7N3KYm00vdqvG1XX78f-r"]
@@ -56,39 +56,6 @@ def get_name(path, id):
     # return "Unknown"
 
 
-def check(s):
-    if s[:3] == 'ADD':
-        get_video(s[4:])
-        return 0, ""
-    if s == 'TRAIN_DATA':
-        return 1, ""
-    return 0, ""
-
-
-val = 0
-face_id = ""
-door_open = 0
-
-def handle_change_video(event):
-    global val, face_id
-    val, face_id = check(event.data)
-def handle_change_door(event):
-    global door_open
-    door_open = event.data
-
-ref_video.listen(handle_change_video)
-ref_door.listen(handle_change_door)
-
-
-def get_video(temp_face_id):
-    ref_video.set('')
-    blob = bucket.blob("video/" + temp_face_id)
-    print("Downloading video ...")
-    blob.download_to_filename("video_train/" + temp_face_id + ".mp4")
-    while not os.path.exists("video_train/" + temp_face_id + ".mp4"):
-        print(".")
-    print("Download video successfully")
-    add_faceid(temp_face_id)
 
 def add_faceid(temp_face_id):
     while not os.path.exists("video_train/" + temp_face_id + ".mp4"):
@@ -118,6 +85,15 @@ def add_faceid(temp_face_id):
             break
     print("Get faceid successfully")
     fcm.sendPush("Add FaceID", "Add FaceID successfully", tokens)
+def get_video(temp_face_id):
+    ref_video.set('')
+    blob = bucket.blob("video/" + temp_face_id)
+    print("Downloading video ...")
+    blob.download_to_filename("video_train/" + temp_face_id + ".mp4")
+    while not os.path.exists("video_train/" + temp_face_id + ".mp4"):
+        print(".")
+    print("Download video successfully")
+    add_faceid(temp_face_id)
 
 # def getImagesAndLabels(path):
 #     imagePaths = [os.path.join(path, f) for f in os.listdir(path)]
@@ -169,13 +145,34 @@ def traindata():
     fcm.sendPush("Train data", "Train data successfully", tokens)
     ref_video.set("")
 
+def check(s):
+    if s[:3] == 'ADD':
+        get_video(s[4:])
+        return 0, ""
+    if s == 'TRAIN_DATA':
+        return 1, ""
+    return 0, ""
+
+
+val = 0
+face_id = ""
+door_open = 0
+
+def handle_change_video(event):
+    global val, face_id
+    val, face_id = check(event.data)
+def handle_change_door(event):
+    global door_open
+    door_open = event.data
+
+ref_video.listen(handle_change_video)
+ref_door.listen(handle_change_door)
+
+
 count_unknown = 0
 last_time = 0
 while True:
     while val == 0:
-        # if requests.get(url).status_code != 200:
-        #     cv2.destroyAllWindows()
-        #     continue
         resp = urllib.request.urlopen(url)
         img = np.asarray(bytearray(resp.read()), dtype="uint8")
         img = cv2.imdecode(img, cv2.IMREAD_COLOR)
