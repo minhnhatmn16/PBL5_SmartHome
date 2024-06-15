@@ -10,8 +10,8 @@ import cv2
 import numpy as np
 import FCM_Send as fcm
 
-url = 'http://192.168.0.8/cam-lo.jpg'
-# url = 'http://192.168.43.78/cam-lo.jpg'
+# url = 'http://192.168.0.8/cam-lo.jpg'
+url = 'http://192.168.43.78/cam-lo.jpg'
 
 tokens = ["fUGLukZqRVSaw94qtv_0Gr:APA91bHk6uUCPnSMQc6fLLf5zmy3nzAIbalIJpvzhuDJVhUOppkq_uqnD6hRQ_VCRKQyRplTt3DQbuXYIyzxIEURtaYldcQi5Ewd19_ueThYuyZTmyiLsCA7N3KYm00vdqvG1XX78f-r"]
 

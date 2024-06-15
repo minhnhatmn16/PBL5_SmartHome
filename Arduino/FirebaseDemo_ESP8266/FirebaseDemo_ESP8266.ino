@@ -11,10 +11,10 @@
 
 // #define WIFI_SSID "banh"
 // #define WIFI_PASSWORD "12345678"
-#define WIFI_SSID "mangmiennui"
-#define WIFI_PASSWORD "bkdn2003"
-// #define WIFI_SSID "Hello"
-// #define WIFI_PASSWORD "012345678"
+// #define WIFI_SSID "mangmiennui"
+// #define WIFI_PASSWORD "bkdn2003"
+#define WIFI_SSID "Hello"
+#define WIFI_PASSWORD "012345678"
 
 int led_pin = 2; // D4
 int led_val;
@@ -32,7 +32,7 @@ int rheostat_pin = 0; // A0
 int rheostat_val;
 
 int servo_pin = 12; // D6
-int servo_val;
+int servo_val = 0;
 
 int ena_pin = 5; // D1
 int in1_pin = 4; // D2
@@ -98,13 +98,10 @@ void loop() {
   door = Firebase.getInt("door");
   rheostat_val = analogRead(rheostat_pin);
 
-  if (door) {
-    servo_val = 0;
-    servo.write(servo_val);
-
+  if (door == 1) {
+    servo.write(0);
   } else {
-    servo_val = 90;
-    servo.write(servo_val);
+    servo.write(90);
 
   }
   

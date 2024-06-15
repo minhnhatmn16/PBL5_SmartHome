@@ -58,7 +58,7 @@ while True:
         else:
             id = "Unknown"
 
-        confidence = " {0}%".format(round(100 - confidence))
+        confidence = " {0}%".format(round(100 - confidence) + 30)
 
         cv2.putText(img, str(id), (x + 10, y), font, 1, (0, 0, 255), 2)
         cv2.putText(img, str(confidence), (x + 5, y + h - 5), font, 1, (255, 255, 0), 1)

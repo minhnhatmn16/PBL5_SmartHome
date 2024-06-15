@@ -36,14 +36,14 @@ def handle_gas(event):
 
 # def handle_unknown(event):
 #     global unknown
-#     unknown = event.data
+#     unknown = even ct.data
 
 value_gas.listen(handle_gas)
-value_unknown.listen(handle_unknown)
+# value_unknown.listen(handle_unknown)
 while True:
     if gas == 1:
         temp = time.time()
-        if temp - last_sent_time >= 10:
+        if temp - last_sent_time >= 5:
             last_sent_time = temp
             sendPush("Gas Leakage Alert", "There is a gas leakage in your kitchen", tokens)
             print(temp)
